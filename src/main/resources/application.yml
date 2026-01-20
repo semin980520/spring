@@ -1,0 +1,19 @@
+#spring에서 application.properties 또는 application.yml은 환경설정파일
+# properties 형식
+#server.port=8081
+#server.name=abc
+#server.time=utc
+#yml형식은 계층구조를 가진 가독성 좋은 형식
+server:
+    port: 8081
+spring:
+#  아래는 jdbc의 기본 db 연결 설정. jdbc뿐만 아니라, mybatis, jpa등 스프링의 대부분의 db 관리기술에서 사용
+#  스키마는 사전 생성 필요, 테이블의 경우 jdbc/mybatis는 사전생성 필요
+    datasource:
+      driver-class-name: org.mariadb.jdbc.Driver  #드라이버
+      url: jdbc:mariadb://localhost:3306/board  #mariadb 주소 / 스키마명
+      username: root
+      password: test1234
+#mapper파일(mybatis의 실질쿼리파일)의 위치를 명시.
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
