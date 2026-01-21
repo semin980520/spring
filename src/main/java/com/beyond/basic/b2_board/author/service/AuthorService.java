@@ -4,9 +4,14 @@ import com.beyond.basic.b2_board.author.domain.Author;
 import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
+import com.beyond.basic.b2_board.author.dtos.AuthorUpdatePwDto;
+import com.beyond.basic.b2_board.author.repository.AuthorJpaRepository;
 import com.beyond.basic.b2_board.author.repository.AuthorMybatisRepository;
+import com.beyond.basic.b2_board.author.repository.AuthorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,6 +23,10 @@ import java.util.stream.Collectors;
 //반드시 초기화 되어야하는 필드(final 변수 등)를 대상으로 생성자를 자동생성
 //내가 필요한 변수들만 생성. AllArgs 필요 없음
 //@RequiredArgsConstructor
+//스프링에서 jpa를 활용할때 트렌잭션처리(commit, 롤백) 지원.
+//commit의 기준점 : 메서드 정상 종료 시점.
+//rollback의 기준점 : 예외 방생했을 때
+@Transactional
 public class AuthorService {
 //    private final AuthorRepository authorRepository;
 //    의존성주입(DI) 방법 1 . 필드(변수)주입 : AutoWired 어노테이션 사용 (간편방식)
@@ -27,10 +36,10 @@ public class AuthorService {
 //    장점1. final을 통해 상수로 사용가능 (안정성 향상)
 //    장점2. 다형성 구현 가능 (interface사용가능);
 //    장점3. 순환참조방지(컴파일 타임에 에러check) (3가지방법 모두 가능)
-   private final AuthorMybatisRepository authorRepository;
+   private final AuthorRepository authorRepository;
 //   생성자가 하나밖에 없을 때에는 Autowired생략 가능
    @Autowired
-    public AuthorService(AuthorMybatisRepository authorRepository){
+    public AuthorService(AuthorRepository authorRepository){
         this.authorRepository = authorRepository;
     }
 //    의존성주입(DI)방법 3. RequiredArgsConstructor어노테이션 사용
@@ -56,8 +65,11 @@ public class AuthorService {
         }
         Author author = dto.toEntity();
         authorRepository.save(author);
-
+//        예외 발생시 transactional 어노테이션에 의해 rollback 처리
+//        authorRepository.findById(10L).orElseThrow(()-> new NoSuchElementException("허허허"));
     }
+//    트랜잭션 처리가 필요없는 조회만 있는 메서드의 경우 성능향상을 위해 readOnly 처리
+    @Transactional(readOnly = true)
     public AuthorDetailDto findById(Long id){
         Optional<Author> optAuthor = authorRepository.findById(id);
         Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
@@ -90,6 +102,17 @@ public class AuthorService {
     public void delete(Long id){
         Author author = authorRepository.findById(id).orElseThrow(()->new NoSuchElementException("없음"));
 
-        authorRepository.delete(id);
+        authorRepository.delete(author);
+   }
+   public void update(AuthorUpdatePwDto dto){
+        Author author = authorRepository.findByEmail(dto.getEmail()).orElseThrow(()->new EntityNotFoundException("없음"));
+            author.updatePassword(dto.getPassword());
+
+//            insert, update 모두 save메서드 사용 -> 변경감지로 대체
+//        authorRepository.save(author);
+
+//          영속성컨텍스트 : 애플리케이션과 DB사이에서 객체를 보관하는 가상의 DB 역할
+//          1) 쓰기지연 : insert, update 등의 작업사항을 즉시 실행하지 않고, 커밋시점에 모아서 실행(성능향상)
+//          2) 변경감지(dirty checking) : 영속상태(managed)의 엔티티는 트랜잭션 커밋시점에 변경감지를 통해 별도의 save없이 DB에 반영
    }
 }
