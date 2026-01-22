@@ -26,6 +26,7 @@ public class PostListDto {
                 .id(post.getId())
                 .title(post.getTitle())
                 .category(post.getCategory())
+                .authorEmail(post.getAuthor().getEmail())
 //                .authorEmail(post.getAuthor().getEmail())
                 .build();
     }

@@ -18,7 +18,6 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> illegal(IllegalArgumentException e){
-        e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(400)
                 .error_message(e.getMessage())

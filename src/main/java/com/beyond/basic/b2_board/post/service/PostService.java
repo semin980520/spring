@@ -32,8 +32,12 @@ public class PostService {
     public void save(PostCreateDto dto1){
         Author author = authorRepository.findAllByEmail(dto1.getAuthorEmail())
                 .orElseThrow(() -> new EntityNotFoundException("이메일이 없습니다"));
+        System.out.println(dto1);
+        System.out.println(author);
         Post createPost = dto1.toEntity(author);
+        System.out.println(createPost);
         postRepository.save(createPost);
+
 
     }
     @Transactional(readOnly = true)
@@ -41,14 +45,16 @@ public class PostService {
 //        List<Post> postList = postRepository.findAllByDelYn("N");
 //        List<PostListDto> dtoList = new ArrayList<>();
 //        for (Post p : postList) {
-//            Author author = authorRepository.findById(p.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다"));
+////            Author author = authorRepository.findById(p.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다"));
 //            PostListDto dto = PostListDto.fromEntity(p);
 //            dtoList.add(dto);
 //        }
+
         List<PostListDto> dto = postRepository.findAllByDelYn("N")
                 .stream()
                 .map(a->PostListDto.fromEntity(a))
                 .collect(Collectors.toList());
+        System.out.println(dto);
         return dto;
 
     }
@@ -60,10 +66,10 @@ public class PostService {
         if ("Y".equals(post.getDelYn())) {
             throw new EntityNotFoundException("삭제된 게시글입니다.");
         }
-        System.out.println(post);
-        System.out.println(author);
+
 //        PostDetailDto dto = PostDetailDto.fromEntity(post,author);
         PostDetailDto dto = PostDetailDto.fromEntity(post);
+        System.out.println(dto);
         return dto;
 
     }

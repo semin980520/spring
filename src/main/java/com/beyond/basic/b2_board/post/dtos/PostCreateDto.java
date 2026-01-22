@@ -23,7 +23,6 @@ public class PostCreateDto {
     private String category;
     @NotBlank(message = "이메일은 필수입니다.")
     private String authorEmail;
-
     public  Post toEntity(Author author){
         return Post.builder()
                 .title(this.title)
