@@ -68,28 +68,31 @@ public class AuthorController {
 //                .build();
 //       }
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
-        try {
-            AuthorDetailDto dto = authorService.findById(id);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(dto);
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            CommonErrorDto dto = CommonErrorDto.builder()
-                    .status_code(404)
-                    .error_message(e.getMessage())
-                    .build();
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(dto);
-        }
+    public AuthorDetailDto findById(@PathVariable Long id) {
+//        try {
+//            AuthorDetailDto dto = authorService.findById(id);
+//            return ResponseEntity
+//                    .status(HttpStatus.OK)
+//                    .body(dto);
+//        } catch (NoSuchElementException e) {
+//            e.printStackTrace();
+//            CommonErrorDto dto = CommonErrorDto.builder()
+//                    .status_code(404)
+//                    .error_message(e.getMessage())
+//                    .build();
+//            return ResponseEntity
+//                    .status(HttpStatus.NOT_FOUND)
+//                    .body(dto);
+        authorService.findById(id);
+        AuthorDetailDto dto = authorService.findById(id);
+        return dto;
+
 
     }
 
     @DeleteMapping("/{id}")
     public String authorDelete(@PathVariable Long id){
-        authorService.delete(id);
+       authorService.delete(id);
 
         return "ok";
     }

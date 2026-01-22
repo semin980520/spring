@@ -10,13 +10,16 @@ import com.beyond.basic.b2_board.post.dtos.PostListDto;
 import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
@@ -27,23 +30,58 @@ public class PostService {
     }
 
     public void save(PostCreateDto dto1){
-         authorRepository.findByEmail(dto1.getAuthorEmail()).orElseThrow(() -> new EntityNotFoundException("이메일이 없습니다"));
-
-        Post createPost = dto1.toEntity();
+        Author author = authorRepository.findAllByEmail(dto1.getAuthorEmail())
+                .orElseThrow(() -> new EntityNotFoundException("이메일이 없습니다"));
+        Post createPost = dto1.toEntity(author);
         postRepository.save(createPost);
 
     }
+    @Transactional(readOnly = true)
     public List<PostListDto> findAll(){
-        List<PostListDto> post = postRepository.findAll().stream().map(a->PostListDto.fromEntity(a)).collect(Collectors.toList());
-       return post;
+//        List<Post> postList = postRepository.findAllByDelYn("N");
+//        List<PostListDto> dtoList = new ArrayList<>();
+//        for (Post p : postList) {
+//            Author author = authorRepository.findById(p.getAuthorId()).orElseThrow(() -> new EntityNotFoundException("아이디가 없습니다"));
+//            PostListDto dto = PostListDto.fromEntity(p);
+//            dtoList.add(dto);
+//        }
+        List<PostListDto> dto = postRepository.findAllByDelYn("N")
+                .stream()
+                .map(a->PostListDto.fromEntity(a))
+                .collect(Collectors.toList());
+        return dto;
 
     }
+    @Transactional(readOnly = true)
     public PostDetailDto findById(Long id){
-        Optional<Author> optAuthor = authorRepository.findById(id);
-        Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
-        Optional<Post> optPost = postRepository.findById(id);
-        Post post = optPost.orElseThrow(()->new EntityNotFoundException("해당 아이디의 게시글이 없습니다"));
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("해당 아이디의 게시글이 없습니다"));
+        Author author = authorRepository.findById(id).orElseThrow(()->new EntityNotFoundException("아이디가 없습니다"));
+        if ("Y".equals(post.getDelYn())) {
+            throw new EntityNotFoundException("삭제된 게시글입니다.");
+        }
+        System.out.println(post);
+        System.out.println(author);
+//        PostDetailDto dto = PostDetailDto.fromEntity(post,author);
         PostDetailDto dto = PostDetailDto.fromEntity(post);
         return dto;
+
+    }
+    public void postDelete(Long id){
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다."));
+
+        post.delete();
+
+//        save x 변경 감지
+    }
+    public void postBack(Long id){
+    Post post = postRepository.findById(id)
+            .orElseThrow(()->new EntityNotFoundException("게시글이 없습니다."));
+    if ("N".equals(post.getDelYn())){
+        throw new EntityNotFoundException("삭제되지 않은 게시글입니다.");
+    }
+    post.back();
+//    save x 변경 감지
     }
 }

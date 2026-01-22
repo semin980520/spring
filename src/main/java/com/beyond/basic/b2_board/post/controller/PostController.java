@@ -21,10 +21,9 @@ public class PostController {
     }
 
     @PostMapping("/post/create")
-    public String postCreate(@RequestBody PostCreateDto dto){
+    public void postCreate(@RequestBody PostCreateDto dto){
         postService.save(dto);
 
-        return "ok";
     }
     @GetMapping("/posts")
     public List<PostListDto> findAll(){
@@ -38,7 +37,11 @@ public class PostController {
     }
     @DeleteMapping("/post/{id}")
     public String postDelete(@PathVariable Long id){
-
+        postService.postDelete(id);
         return "ok";
+    }
+    @PatchMapping("/post/{id}")
+    public void postBack(@PathVariable Long id){
+        postService.postBack(id);
     }
 }

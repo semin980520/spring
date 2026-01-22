@@ -8,6 +8,8 @@ import com.beyond.basic.b2_board.author.dtos.AuthorUpdatePwDto;
 import com.beyond.basic.b2_board.author.repository.AuthorJpaRepository;
 import com.beyond.basic.b2_board.author.repository.AuthorMybatisRepository;
 import com.beyond.basic.b2_board.author.repository.AuthorRepository;
+import com.beyond.basic.b2_board.post.domain.Post;
+import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,11 +39,13 @@ public class AuthorService {
 //    장점2. 다형성 구현 가능 (interface사용가능);
 //    장점3. 순환참조방지(컴파일 타임에 에러check) (3가지방법 모두 가능)
    private final AuthorRepository authorRepository;
+   private final PostRepository postRepository;
 //   생성자가 하나밖에 없을 때에는 Autowired생략 가능
    @Autowired
-    public AuthorService(AuthorRepository authorRepository){
+    public AuthorService(AuthorRepository authorRepository, PostRepository postRepository){
         this.authorRepository = authorRepository;
-    }
+       this.postRepository = postRepository;
+   }
 //    의존성주입(DI)방법 3. RequiredArgsConstructor어노테이션 사용
 //    반드시 초기화되어야 하는 필드를 선언하고, 위 어노테이션 선언시 생성자주입방식으로 의존성이 주입됨
 //    다형성 설계 불가능
@@ -60,11 +64,22 @@ public class AuthorService {
 //        방법2. toEntity, fromEntity 패턴을 통한 객체조립
 //        객체조립이라는 반복작업을 별도의 코드로 때어내 공통화
 
-        if (authorRepository.findByEmail(dto.getEmail()).isPresent()){
+        if (authorRepository.findAllByEmail(dto.getEmail()).isPresent()){
             throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
         }
         Author author = dto.toEntity();
         authorRepository.save(author);
+//        cascade persist를 활용한 예시
+//        Author authorDb = authorRepository.save(author);
+//      author.getPostList().add(Post.builder()
+//                        .author(author)
+//                        .title("안녕하세요")
+//                        .build());
+//        cascade 옵션이 아닌 예시
+//        postRepository.save(Post.builder()
+//                        .title("안녕하세요")
+//                        .author(authorDb)
+//                        .build());
 //        예외 발생시 transactional 어노테이션에 의해 rollback 처리
 //        authorRepository.findById(10L).orElseThrow(()-> new NoSuchElementException("허허허"));
     }
@@ -73,10 +88,13 @@ public class AuthorService {
     public AuthorDetailDto findById(Long id){
         Optional<Author> optAuthor = authorRepository.findById(id);
         Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
+
+//        List<Post> postList = postRepository.findAllByAuthorIdAndDelYn(author.getId(),"N");
 //        dto 조립
 //        AuthorDetailDto dto = new AuthorDetailDto(author.getId(),author.getName(), author.getEmail());
 //        fromEntity는 아직 dto객체가 만들어지지 않은 상태이므로 static메서드로 설계
 //        AuthorDetailDto dto1 = AuthorDetailDto.builder().id(author.getId()).email(author.getEmail()).name(author.getName()).build();
+//        AuthorDetailDto dto2 = AuthorDetailDto.fromEntity(author, 0);
         AuthorDetailDto dto2 = AuthorDetailDto.fromEntity(author);
         return dto2;
     }
@@ -105,7 +123,7 @@ public class AuthorService {
         authorRepository.delete(author);
    }
    public void update(AuthorUpdatePwDto dto){
-        Author author = authorRepository.findByEmail(dto.getEmail()).orElseThrow(()->new EntityNotFoundException("없음"));
+        Author author = authorRepository.findAllByEmail(dto.getEmail()).orElseThrow(()->new EntityNotFoundException("없음"));
             author.updatePassword(dto.getPassword());
 
 //            insert, update 모두 save메서드 사용 -> 변경감지로 대체

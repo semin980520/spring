@@ -14,6 +14,7 @@ public class AuthorDetailDto {
     private Long id;
     private String name;
     private String email;
+    private int postCount;
     private String password;
 
 
@@ -23,6 +24,7 @@ public class AuthorDetailDto {
                 .name(author.getName())
                 .email(author.getEmail())
                 .password(author.getPassword())
+                .postCount(author.getPostList().size())
                 .build();
     }
 }
