@@ -33,10 +33,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 //    값 검증을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //	로그인을 위한 security 의존성 // 모든 기능 로그인 해야됨이 디폴트
+//    security의존성을 적용하자마자. 모든 api요청에 대해 로그인을 요구 (Authentication(인증)객체의 생성여부확인)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+//	jwt토큰 관련 라이브러리 추가
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    // 	토큰의 JSON 인코딩/디코딩, 직렬화/파싱 에 필요
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 //    mybatis 의존성
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 //    jpa+s.d.j 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
 //    아래는 테스트코드 작성을 위한 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

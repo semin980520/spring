@@ -89,5 +89,5 @@ public class PostService {
     }
     post.back();
 //    save x 변경 감지
-    }
+        }
 }
