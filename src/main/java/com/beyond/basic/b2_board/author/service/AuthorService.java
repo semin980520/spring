@@ -71,11 +71,11 @@ public class AuthorService {
         Author author = dto.toEntity(passwordEncoder.encode(dto.getPassword()));
         authorRepository.save(author);
 //        cascade persist를 활용한 예시
-//        Author authorDb = authorRepository.save(author);
-//      author.getPostList().add(Post.builder()
-//                        .author(author)
-//                        .title("안녕하세요")
-//                        .build());
+        Author authorDb = authorRepository.save(author);
+      author.getPostList().add(Post.builder()
+                        .author(author)
+                        .title("안녕하세요")
+                        .build());
 //        cascade 옵션이 아닌 예시
 //        postRepository.save(Post.builder()
 //                        .title("안녕하세요")

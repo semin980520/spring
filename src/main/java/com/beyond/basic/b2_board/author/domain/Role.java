@@ -6,7 +6,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public enum Role {
-    ADMiN, USER
+    ADMIN, USER
 }
 
 

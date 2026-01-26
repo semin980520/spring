@@ -7,6 +7,7 @@ import com.beyond.basic.b2_board.author.service.AuthorService;
 import com.beyond.basic.b2_board.common.auth.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,9 @@ public class AuthorController {
             return "OK";
     }
     @GetMapping("/list")
+//    PreAuthorize : Authentication객체 안의 권한정보를 확인하는 어노테이션
+//    2개 이상의 role을 허용하는경우 : "hasRole('ADMIN') or hasRole('SELLER') "
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AuthorListDto> authorFindAll(){
         List<AuthorListDto> dtoList = authorService.findAll();
 

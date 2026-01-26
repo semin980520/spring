@@ -22,6 +22,7 @@ public class PostController {
 
     @PostMapping("/post/create")
     public void postCreate(@RequestBody PostCreateDto dto){
+
         postService.save(dto);
 
     }
