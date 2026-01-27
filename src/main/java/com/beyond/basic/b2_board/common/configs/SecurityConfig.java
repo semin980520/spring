@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final JwtAuthenticationHandler jwtAuthenticationHandler;
     @Autowired
-    public SecurityConfig(JwtTokenFilter jwtTokenFilter, JwtAuthenticationHandler jwtAuthenticationHandler) {
+    public SecurityConfig( JwtTokenFilter jwtTokenFilter, JwtAuthenticationHandler jwtAuthenticationHandler) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.jwtAuthenticationHandler = jwtAuthenticationHandler;
     }

@@ -29,19 +29,20 @@ public class JwtTokenFilter extends GenericFilter {
 
 
             HttpServletRequest req = (HttpServletRequest) servletRequest;
-            String bearerToken = req.getHeader("Authorization");
+            String bearerToken = req.getHeader("Authorization"); //HttpServletRequest로 형 변환 후 Header에서 토큰 꺼내는 과정
+
 
             if (bearerToken == null) {
 //            token이 없는 경우 검증을 할 수 없음으로, filter chain으로 return
                 filterChain.doFilter(servletRequest, servletResponse);
                 return;
             }
-//       Bearer문저열을 제거한 후에 jwt token만을 검증
+//       Bearer문자열을 제거한 후에 jwt token만을 검증
             String token = bearerToken.substring(7);
 
 
 //        token 검증 및 claims 추출
-            Claims claims = Jwts.parserBuilder() // 페이로드 꺼느내는 코드
+            Claims claims = Jwts.parserBuilder() // 페이로드 시크릿키 꺼네서 조합해서 시그니처와 맞는지 검증까지해줌
                     .setSigningKey(st_secret_ket)
                     .build()
                     .parseClaimsJws(token)

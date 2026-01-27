@@ -9,6 +9,7 @@ import com.beyond.basic.b2_board.post.domain.Post;
 import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +100,13 @@ public class AuthorService {
         AuthorDetailDto dto2 = AuthorDetailDto.fromEntity(author);
         return dto2;
     }
-
+    public AuthorDetailDto myinfo(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Author author = authorRepository.findAllByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("이메일이 없습니다"));
+        AuthorDetailDto dto = AuthorDetailDto.fromEntity(author);
+        return dto;
+    }
     public List<AuthorListDto> findAll(){
 //        List<Author> authors = authorRepository.findAll();
 //        List<AuthorListDto> list = new ArrayList<>();

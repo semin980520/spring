@@ -52,11 +52,11 @@ public class PostService {
 //            dtoList.add(dto);
 //        }
 
-        List<PostListDto> dto = postRepository.findAllByDelYn("N")
+//        List<PostListDto> dto = postRepository.findAllByDelYn("N")
+        List<PostListDto> dto = postRepository.findAllFetchInnerJoin()
                 .stream()
                 .map(a->PostListDto.fromEntity(a))
                 .collect(Collectors.toList());
-        System.out.println(dto);
         return dto;
 
     }

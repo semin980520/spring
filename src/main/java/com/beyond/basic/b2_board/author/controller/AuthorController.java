@@ -7,7 +7,10 @@ import com.beyond.basic.b2_board.author.service.AuthorService;
 import com.beyond.basic.b2_board.common.auth.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,6 +69,7 @@ public class AuthorController {
 //                .build();
 //       }
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public AuthorDetailDto findById(@PathVariable Long id) {
 //        try {
 //            AuthorDetailDto dto = authorService.findById(id);
@@ -86,6 +90,11 @@ public class AuthorController {
         return dto;
 
 
+    }
+    @GetMapping("/myinfo")
+    public ResponseEntity<?> myinfo(@AuthenticationPrincipal String principal){ // 컨트롤러 객체에서 email 꺼내기
+       AuthorDetailDto dto = authorService.myinfo();
+       return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @DeleteMapping("/{id}")

@@ -27,7 +27,6 @@ public class CommonExceptionHandler {
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> notValid(MethodArgumentNotValidException e){
-        e.printStackTrace();
         String errorMessage = e.getBindingResult()
                 .getFieldError()
                 .getDefaultMessage();
@@ -41,7 +40,6 @@ public class CommonExceptionHandler {
     }
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<?> notValid(NoSuchElementException e){
-        e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(404)
                 .error_message(e.getMessage())
@@ -52,7 +50,6 @@ public class CommonExceptionHandler {
     }
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> notValid(EntityNotFoundException e){
-        e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(404)
                 .error_message(e.getMessage())
@@ -63,7 +60,6 @@ public class CommonExceptionHandler {
     }
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<?> authorized(AuthorizationDeniedException e){
-        e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(403)
                 .error_message(e.getMessage())
@@ -75,7 +71,6 @@ public class CommonExceptionHandler {
     @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 분기처리 할 거 없어서 가능
     public ResponseEntity<?> exception(Exception e){
-        e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(500)
                 .error_message(e.getMessage())
