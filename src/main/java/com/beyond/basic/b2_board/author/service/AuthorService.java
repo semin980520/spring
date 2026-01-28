@@ -8,7 +8,9 @@ import com.beyond.basic.b2_board.author.repository.AuthorRepository;
 import com.beyond.basic.b2_board.post.domain.Post;
 import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 //Component 어노테이션을 통해 싱글톤(단 하나의) 객체가 생성되고, 스프링에 의해 스프링 컨텍스트에서 관리
 @Service
 //반드시 초기화 되어야하는 필드(final 변수 등)를 대상으로 생성자를 자동생성
@@ -131,8 +134,10 @@ public class AuthorService {
         authorRepository.delete(author);
    }
    public void update(AuthorUpdatePwDto dto){
-        Author author = authorRepository.findAllByEmail(dto.getEmail()).orElseThrow(()->new EntityNotFoundException("없음"));
-            author.updatePassword(dto.getPassword());
+       String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+       log.info(email);
+        Author author = authorRepository.findAllByEmail(email).orElseThrow(()->new EntityNotFoundException("없음"));
+            author.updatePassword(passwordEncoder.encode(dto.getPassword()));
 
 //            insert, update 모두 save메서드 사용 -> 변경감지로 대체
 //        authorRepository.save(author);

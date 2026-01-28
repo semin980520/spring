@@ -7,6 +7,9 @@
 server:
   port: 8081
 spring:
+  config:
+    activate:
+      on-profile: local
 #  아래는 jdbc의 기본 db 연결 설정. jdbc뿐만 아니라, mybatis, jpa등 스프링의 대부분의 db 관리기술에서 사용
 #  스키마는 사전 생성 필요, 테이블의 경우 jdbc/mybatis는 사전생성 필요
   datasource:
@@ -39,3 +42,7 @@ jwt:
   #  인코딩된 문자 32자 이상 필요.(특수문자) : base64 encoder에서
   #  beyondaccesstokensecretkeybeyondaccesstokensecretkeybeyondaccesstokensecretkey
   secretKey: YmV5b25kYWNjZXNzdG9rZW5zZWNyZXRrZXliZXlvbmRhY2Nlc3N0b2tlbnNlY3JldGtleWJleW9uZGFjY2Vzc3Rva2Vuc2VjcmV0a2V5
+
+logging:
+  level:
+    root: info

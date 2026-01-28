@@ -1,4 +1,4 @@
-package com.beyond.basic.b2_board.author.dtos;
+package com.beyond.basic.b2_board.post.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthorMyinfoDto {
+public class PostSearchDto {
 
-    private String email;
+    private String title;
+    private String category;
+    private String contents;
+
 }
